@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>폭탄 초성 게임</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #bombImage {
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    button {
+      padding: 16px 32px;
+      font-size: 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #ff4d4d;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #status {
+      font-size: 28px;
+      min-height: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>💣 폭탄 초성 게임 💣</h1>
+
+  <div id="game-container">
+    <img id="bombImage" src="bomb.png" alt="폭탄 이미지">
+    <button onclick="startBomb()">시작</button>
+    <div id="status">버튼을 누르면 시작!</div>
+  </div>
+
+  <audio id="tickSound" src="tick.mp3" preload="auto"></audio>
+  <audio id="bombSound" src="bomb.mp3" preload="auto"></audio>
+
+  <script>
+    let tickInterval;
+    let bombTimeout;
+    let isRunning = false;
+
+    function startBomb() {
+      if (isRunning) return;
+      isRunning = true;
+
+      const min = 7000;
+      const max = 20000;
+      const randomTime = Math.random() * (max - min) + min;
+
+      const tickSound = document.getElementById("tickSound");
+      const bombSound = document.getElementById("bombSound");
+      const status = document.getElementById("status");
+      const bombImage = document.getElementById("bombImage");
+
+      clearInterval(tickInterval);
+      clearTimeout(bombTimeout);
+
+      tickSound.pause();
+      tickSound.currentTime = 0;
+      bombSound.pause();
+      bombSound.currentTime = 0;
+
+      bombImage.src = "bomb.png";
+      status.innerText = "⏳ 폭탄 작동 중...";
+
+      tickInterval = setInterval(() => {
+        tickSound.currentTime = 0;
+        tickSound.play();
+      }, 1000);
+
+      bombTimeout = setTimeout(() => {
+        clearInterval(tickInterval);
+        tickSound.pause();
+        tickSound.currentTime = 0;
+
+        bombImage.src = "explosion.gif";
+        status.innerText = "💥 터졌다!";
+        bombSound.play();
+
+        isRunning = false;
+      }, randomTime);
+    }
+  </script>
+<script>
+  let tickInterval;
+  let bombTimeout;
+  let isRunning = false;
+
+  function playTick() {
+    const sound = new Audio("tick.mp3");
+    sound.play();
+  }
+
+  function startBomb() {
+    if (isRunning) return;
+    isRunning = true;
+
+    const min = 7000;
+    const max = 20000;
+    const randomTime = Math.random() * (max - min) + min;
+
+    const bombSound = document.getElementById("bombSound");
+    const status = document.getElementById("status");
+    const bombImage = document.getElementById("bombImage");
+
+    clearInterval(tickInterval);
+    clearTimeout(bombTimeout);
+
+    bombSound.pause();
+    bombSound.currentTime = 0;
+
+    bombImage.src = "bomb.png";
+    status.innerText = "⏳ 폭탄 작동 중...";
+
+    tickInterval = setInterval(() => {
+      playTick();
+    }, 1000);
+
+    bombTimeout = setTimeout(() => {
+      clearInterval(tickInterval);
+
+      bombImage.src = "explosion.gif";
+      status.innerText = "💥 터졌다!";
+      bombSound.play();
+
+      isRunning = false;
+    }, randomTime);
+  }
+</script>
+</body>
+</html>
